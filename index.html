@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ретро Форум 2007 Pro - С Аккаунтами</title>
+    <title>Ретро Форум 2007 Pro - Улучшенная версия</title>
     <style>
         * {
             margin: 0;
@@ -273,6 +273,7 @@
             font-size: 9px;
             font-weight: bold;
             display: inline-block;
+            margin-right: 4px;
         }
 
         .button {
@@ -348,8 +349,15 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
+        }
+
+        .char-counter {
+            font-size: 9px;
+            color: #999;
+            margin-top: 2px;
         }
 
         .post-item {
@@ -403,6 +411,22 @@
             font-size: 9px;
             color: #666;
             border-top: 1px solid #dfdfdf;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .post-action-link {
+            cursor: pointer;
+            color: #000080;
+            text-decoration: underline;
+        }
+
+        .post-action-link:hover {
+            color: #1084d7;
         }
 
         .modal {
@@ -495,6 +519,13 @@
             margin-bottom: 4px;
         }
 
+        .message-subject {
+            font-weight: bold;
+            font-size: 11px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
         .message-text {
             font-size: 11px;
             margin-bottom: 4px;
@@ -504,6 +535,10 @@
         .message-time {
             font-size: 9px;
             color: #999;
+        }
+
+        .message-unread {
+            background: #ffffcc;
         }
 
         .view {
@@ -538,6 +573,89 @@
             color: #000080;
         }
 
+        .search-box {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: 2px inset #dfdfdf;
+            padding: 4px 6px;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 11px;
+            background: white;
+            color: #000;
+        }
+
+        .search-box button {
+            padding: 4px 10px;
+        }
+
+        .online-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00aa00;
+            margin-right: 4px;
+        }
+
+        .user-item {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .user-item-actions button {
+            padding: 2px 8px;
+            font-size: 10px;
+        }
+
+        .admin-user-row {
+            display: grid;
+            grid-template-columns: 100px 80px 70px 1fr 80px;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 10px;
+            align-items: center;
+        }
+
+        .admin-user-row:last-child {
+            border-bottom: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(to bottom, #707070, #505050);
+            border-style: inset;
+            color: #ffff00;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -554,6 +672,14 @@
 
             .header-left, .header-right {
                 flex: none;
+            }
+
+            .forum-item {
+                grid-template-columns: 30px 1fr 50px;
+            }
+
+            .thread-item {
+                grid-template-columns: 30px 1fr 50px;
             }
         }
     </style>
@@ -574,8 +700,9 @@
         <!-- Navigation -->
         <div class="nav-bar">
             <a class="nav-item active" onclick="showView('forums')">📂 Форумы</a>
-            <a class="nav-item" onclick="showView('messages')">✉️ Сообщения</a>
+            <a class="nav-item" onclick="showView('messages')">✉️ Сообщения <span id="message-badge" style="background:#ff0000;color:white;padding:1px 4px;border-radius:2px;font-size:9px;"></span></a>
             <a class="nav-item" onclick="showView('profile')">👤 Профиль</a>
+            <a class="nav-item" onclick="showView('admin')" id="admin-btn" style="display:none;">⚙️ Администратор</a>
             <a class="nav-item" onclick="showLoginModal()">🔓 Вход/Регистрация</a>
             <a class="nav-item" onclick="logout()" id="logout-btn" style="display:none;">🚪 Выход</a>
         </div>
@@ -595,9 +722,9 @@
                 </div>
 
                 <div class="sidebar-panel">
-                    <div class="panel-header">👥 Последние пользователи</div>
-                    <div class="panel-body" id="latest-users">
-                        <p style="color: #999;">Нет пользователей</p>
+                    <div class="panel-header">👥 Онлайн пользователи</div>
+                    <div class="panel-body" id="online-users-list">
+                        <p style="color: #999;">Нет пользователей онлайн</p>
                     </div>
                 </div>
 
@@ -665,6 +792,7 @@
                     <div class="action-bar">
                         <button class="button" onclick="backToForums()">← Назад</button>
                         <button class="button primary" onclick="openNewThreadModal()" id="create-thread-btn">📝 Новая тема</button>
+                        <input type="text" id="thread-search" class="input-field" placeholder="Поиск тем..." style="flex:1; max-width:200px;">
                     </div>
                     <div class="forum-section">
                         <div class="section-header" id="forum-title">Темы форума</div>
@@ -683,6 +811,8 @@
                     </div>
                     <div class="action-bar">
                         <button class="button primary" onclick="openReplyModal()" id="reply-btn">📝 Ответить</button>
+                        <button class="button" onclick="pinCurrentThread()" id="pin-btn" style="display:none;">📌 Закрепить</button>
+                        <button class="button" onclick="lockCurrentThread()" id="lock-btn" style="display:none;">🔒 Заблокировать</button>
                     </div>
                 </div>
 
@@ -691,6 +821,7 @@
                     <div class="user-status" id="message-status"></div>
                     <div class="action-bar">
                         <button class="button primary" onclick="openSendMessageModal()">✉️ Новое сообщение</button>
+                        <input type="text" id="message-search" class="input-field" placeholder="Поиск сообщений..." style="flex:1; max-width:200px;">
                     </div>
                     <div class="forum-section">
                         <div class="section-header">💌 Входящие сообщения</div>
@@ -704,6 +835,53 @@
                     <div class="forum-section">
                         <div class="section-header">👤 Профиль пользователя</div>
                         <div class="section-body" id="profile-content" style="padding: 12px;"></div>
+                    </div>
+                </div>
+
+                <!-- Admin Panel View -->
+                <div id="admin" class="view" style="display:none;">
+                    <div class="forum-section">
+                        <div class="section-header">⚙️ Панель администратора</div>
+                        <div class="section-body" style="padding: 12px;">
+                            <div class="tabs">
+                                <button class="tab-btn button active" onclick="switchAdminTab('users')">👥 Пользователи</button>
+                                <button class="tab-btn button" onclick="switchAdminTab('settings')">⚙️ Настройки</button>
+                                <button class="tab-btn button" onclick="switchAdminTab('logs')">📋 Логи</button>
+                            </div>
+
+                            <!-- Users Management -->
+                            <div id="users-tab" style="display:block;">
+                                <h3 style="color: #000080; margin-bottom: 10px;">👥 Управление пользователями</h3>
+                                <input type="text" id="admin-user-search" class="input-field" placeholder="Поиск пользователя..." style="margin-bottom: 10px;">
+                                <div style="border: 1px solid #ddd; background: white; border-radius: 3px;">
+                                    <div id="users-list" style="max-height: 400px; overflow-y: auto;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Forum Settings -->
+                            <div id="settings-tab" style="display:none;">
+                                <h3 style="color: #000080; margin-bottom: 10px;">⚙️ Настройки форума</h3>
+                                <div style="background: white; padding: 10px; border-radius: 3px;">
+                                    <p><strong>Статистика форума:</strong></p>
+                                    <p>📊 Всего пользователей: <span id="admin-total-users">0</span></p>
+                                    <p>📝 Всего тем: <span id="admin-total-threads">0</span></p>
+                                    <p>💬 Всего постов: <span id="admin-total-posts">0</span></p>
+                                    <p>✉️ Всего сообщений: <span id="admin-total-messages">0</span></p>
+                                    <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
+                                    <p style="font-size: 10px; color: #999; margin-bottom: 10px;">⚠️ Опасная зона:</p>
+                                    <button class="button danger" onclick="if(confirm('Вы уверены? Это удалит все данные!')) clearAllData()">🗑️ Очистить всю БД</button>
+                                    <button class="button" onclick="exportData()" style="margin-left: 5px;">📥 Экспортировать данные</button>
+                                </div>
+                            </div>
+
+                            <!-- Logs -->
+                            <div id="logs-tab" style="display:none;">
+                                <h3 style="color: #000080; margin-bottom: 10px;">📋 Логи деятельности</h3>
+                                <div style="background: white; padding: 10px; border-radius: 3px; max-height: 400px; overflow-y: auto;" id="logs-list">
+                                    <p style="color: #999; font-size: 11px;">Система логирования активна. Здесь отображаются последние действия на форуме.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -727,11 +905,11 @@
                 <div id="login-tab">
                     <div class="form-group">
                         <label>Имя пользователя:</label>
-                        <input type="text" class="input-field" id="login-username" placeholder="Введите имя пользователя..." style="width: 100%;">
+                        <input type="text" class="input-field" id="login-username" placeholder="Введите имя пользователя...">
                     </div>
                     <div class="form-group">
                         <label>Пароль:</label>
-                        <input type="password" class="input-field" id="login-password" placeholder="Введите пароль..." style="width: 100%;">
+                        <input type="password" class="input-field" id="login-password" placeholder="Введите пароль...">
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="button primary" onclick="performLogin()">✓ Войти</button>
@@ -743,19 +921,19 @@
                 <div id="register-tab" style="display:none;">
                     <div class="form-group">
                         <label>Имя пользователя:</label>
-                        <input type="text" class="input-field" id="register-username" placeholder="3-20 символов..." style="width: 100%;">
+                        <input type="text" class="input-field" id="register-username" placeholder="3-20 символов...">
                     </div>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" class="input-field" id="register-email" placeholder="your@email.com" style="width: 100%;">
+                        <input type="email" class="input-field" id="register-email" placeholder="your@email.com">
                     </div>
                     <div class="form-group">
                         <label>Пароль:</label>
-                        <input type="password" class="input-field" id="register-password" placeholder="Минимум 6 символов..." style="width: 100%;">
+                        <input type="password" class="input-field" id="register-password" placeholder="Минимум 6 символов...">
                     </div>
                     <div class="form-group">
                         <label>Подтверждение пароля:</label>
-                        <input type="password" class="input-field" id="register-password2" placeholder="Повторите пароль..." style="width: 100%;">
+                        <input type="password" class="input-field" id="register-password2" placeholder="Повторите пароль...">
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="button primary" onclick="performRegister()">✓ Зарегистрироваться</button>
@@ -776,7 +954,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Форум:</label>
-                    <select class="input-field" id="thread-forum" style="width: 100%;">
+                    <select class="input-field" id="thread-forum">
                         <option value="0">Основное обсуждение</option>
                         <option value="1">Технологии</option>
                         <option value="2">Развлечения</option>
@@ -784,20 +962,22 @@
                 </div>
                 <div class="form-group">
                     <label>Заголовок темы:</label>
-                    <input type="text" class="input-field" id="thread-title-input" placeholder="Введите заголовок..." style="width: 100%;">
+                    <input type="text" class="input-field" id="thread-title-input" placeholder="Введите заголовок..." maxlength="100">
+                    <div class="char-counter"><span id="title-counter">0</span>/100</div>
                 </div>
                 <div class="form-group">
                     <label>Содержание:</label>
-                    <textarea class="textarea" id="thread-text-input" placeholder="Введите текст сообщения..."></textarea>
+                    <textarea class="textarea" id="thread-text-input" placeholder="Введите текст сообщения..." maxlength="5000"></textarea>
+                    <div class="char-counter"><span id="content-counter">0</span>/5000</div>
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="thread-private"> 🔒 Приватная тема (только для выбранных пользователей)
+                        <input type="checkbox" id="thread-private"> 🔒 Приватная тема
                     </label>
                 </div>
-                <div id="private-users-select" style="display:none; margin-bottom: 10px;">
-                    <label>Дать доступ пользователям:</label>
-                    <div id="users-checkboxes" style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 5px;"></div>
+                <div id="private-users-select" style="display:none; margin-bottom: 10px; border: 1px solid #999; padding: 8px;">
+                    <label style="display: block; margin-bottom: 5px;"><strong>Дать доступ пользователям:</strong></label>
+                    <div id="users-checkboxes" style="max-height: 150px; overflow-y: auto;"></div>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="button primary" onclick="createNewThread()">✓ Создать тему</button>
@@ -817,7 +997,8 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Ваше сообщение:</label>
-                    <textarea class="textarea" id="reply-text" placeholder="Введите ответ..."></textarea>
+                    <textarea class="textarea" id="reply-text" placeholder="Введите ответ..." maxlength="5000"></textarea>
+                    <div class="char-counter"><span id="reply-counter">0</span>/5000</div>
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button class="button" onclick="closeModal('reply-modal')">✕ Отмена</button>
@@ -837,17 +1018,18 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Кому:</label>
-                    <select class="input-field" id="message-recipient" style="width: 100%;">
+                    <select class="input-field" id="message-recipient">
                         <option value="">Выберите пользователя...</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Тема:</label>
-                    <input type="text" class="input-field" id="message-subject" placeholder="Тема сообщения..." style="width: 100%;">
+                    <input type="text" class="input-field" id="message-subject" placeholder="Тема сообщения..." maxlength="100">
                 </div>
                 <div class="form-group">
                     <label>Сообщение:</label>
-                    <textarea class="textarea" id="message-text" placeholder="Введите текст..."></textarea>
+                    <textarea class="textarea" id="message-text" placeholder="Введите текст..." maxlength="5000"></textarea>
+                    <div class="char-counter"><span id="message-counter">0</span>/5000</div>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="button primary" onclick="sendPrivateMessage()">✓ Отправить</button>
@@ -866,12 +1048,69 @@
                 { id: 1, name: 'Технологии', desc: 'Обсуждение ПК и интернета', threads: [] },
                 { id: 2, name: 'Развлечения', desc: 'Игры, кино и хобби', threads: [] }
             ],
-            messages: []
+            messages: [],
+            logs: []
         };
 
         let currentUser = null;
         let currentForum = null;
         let currentThread = null;
+        let onlineUsers = [];
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            currentUser = getCurrentUser();
+            updateHeader();
+            updateStatistics();
+            updateOnlineUsers();
+            setupCharCounters();
+            setupSearchBoxes();
+            setInterval(updateOnlineUsers, 5000);
+        });
+
+        // ============ CHARACTER COUNTER SETUP ============
+        function setupCharCounters() {
+            const counters = {
+                'thread-title-input': 'title-counter',
+                'thread-text-input': 'content-counter',
+                'reply-text': 'reply-counter',
+                'message-text': 'message-counter'
+            };
+
+            Object.entries(counters).forEach(([input, counter]) => {
+                const elem = document.getElementById(input);
+                if (elem) {
+                    elem.addEventListener('input', function() {
+                        document.getElementById(counter).textContent = this.value.length;
+                    });
+                }
+            });
+        }
+
+        // ============ SEARCH SETUP ============
+        function setupSearchBoxes() {
+            const threadSearch = document.getElementById('thread-search');
+            if (threadSearch) {
+                threadSearch.addEventListener('input', function() {
+                    searchThreads(this.value);
+                });
+            }
+
+            const messageSearch = document.getElementById('message-search');
+            if (messageSearch) {
+                messageSearch.addEventListener('input', function() {
+                    searchMessages(this.value);
+                });
+            }
+
+            const adminUserSearch = document.getElementById('admin-user-search');
+            if (adminUserSearch) {
+                adminUserSearch.addEventListener('input', function() {
+                    searchUsers(this.value);
+                });
+            }
+        }
 
         // ============ STORAGE MANAGEMENT ============
         function saveData() {
@@ -881,10 +1120,15 @@
         function loadData() {
             const data = localStorage.getItem('forumData');
             if (data) {
-                const loaded = JSON.parse(data);
-                forumData.users = loaded.users || [];
-                forumData.forums = loaded.forums || forumData.forums;
-                forumData.messages = loaded.messages || [];
+                try {
+                    const loaded = JSON.parse(data);
+                    forumData.users = loaded.users || [];
+                    forumData.forums = loaded.forums || forumData.forums;
+                    forumData.messages = loaded.messages || [];
+                    forumData.logs = loaded.logs || [];
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                }
             }
         }
 
@@ -897,19 +1141,136 @@
             currentUser = user;
             if (user) {
                 localStorage.setItem('currentUser', JSON.stringify(user));
+                onlineUsers = onlineUsers.filter(u => u.id !== user.id);
+                onlineUsers.push({...user, lastActivity: new Date().getTime()});
             } else {
                 localStorage.removeItem('currentUser');
             }
             updateHeader();
+            updateStatistics();
+        }
+
+        function addLog(action, details = '') {
+            forumData.logs.push({
+                timestamp: new Date().toLocaleString('ru-RU'),
+                user: currentUser ? currentUser.username : 'Гость',
+                action: action,
+                details: details
+            });
+            if (forumData.logs.length > 100) {
+                forumData.logs = forumData.logs.slice(-100);
+            }
+            saveData();
+        }
+
+        // ============ UI UPDATE FUNCTIONS ============
+        function updateHeader() {
+            const status = document.getElementById('header-status');
+            const adminBtn = document.getElementById('admin-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (currentUser) {
+                status.innerHTML = `
+                    <p>Добро пожаловать, <strong style="color: #ffff00;">${currentUser.username}</strong></p>
+                    <p>${currentUser.isAdmin ? '👑 Администратор' : (currentUser.isModerator ? '🛡️ Модератор' : 'Участник')}</p>
+                `;
+                adminBtn.style.display = currentUser.isAdmin ? 'block' : 'none';
+                logoutBtn.style.display = 'block';
+            } else {
+                status.innerHTML = '<p>Вы не вошли</p>';
+                adminBtn.style.display = 'none';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        function updateStatistics() {
+            let totalThreads = 0;
+            let totalPosts = 0;
+
+            forumData.forums.forEach(forum => {
+                totalThreads += forum.threads.length;
+                forum.threads.forEach(thread => {
+                    totalPosts += thread.posts.length;
+                });
+            });
+
+            document.getElementById('total-users').textContent = forumData.users.length;
+            document.getElementById('online-users').textContent = onlineUsers.length;
+            document.getElementById('total-threads').textContent = totalThreads;
+            document.getElementById('total-posts').textContent = totalPosts;
+
+            document.getElementById('admin-total-users').textContent = forumData.users.length;
+            document.getElementById('admin-total-threads').textContent = totalThreads;
+            document.getElementById('admin-total-posts').textContent = totalPosts;
+            document.getElementById('admin-total-messages').textContent = forumData.messages.length;
+
+            forumData.forums.forEach((forum, idx) => {
+                let forumPosts = 0;
+                forum.threads.forEach(thread => {
+                    forumPosts += thread.posts.length;
+                });
+                document.getElementById(`forum-${idx}-threads`).textContent = forum.threads.length;
+                document.getElementById(`forum-${idx}-posts`).textContent = forumPosts;
+            });
+
+            updateMessageBadge();
+        }
+
+        function updateMessageBadge() {
+            if (!currentUser) return;
+            const unreadCount = forumData.messages.filter(msg => msg.to === currentUser.id && !msg.read).length;
+            const badge = document.getElementById('message-badge');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+            } else {
+                badge.textContent = '';
+            }
+        }
+
+        function updateOnlineUsers() {
+            const container = document.getElementById('online-users-list');
+            const now = new Date().getTime();
+            onlineUsers = onlineUsers.filter(u => (now - u.lastActivity) < 300000);
+
+            if (currentUser) {
+                const user = onlineUsers.find(u => u.id === currentUser.id);
+                if (user) {
+                    user.lastActivity = now;
+                } else {
+                    onlineUsers.push({...currentUser, lastActivity: now});
+                }
+            }
+
+            if (onlineUsers.length === 0) {
+                container.innerHTML = '<p style="color: #999;">Нет пользователей онлайн</p>';
+            } else {
+                let html = '';
+                onlineUsers.forEach(user => {
+                    html += `
+                        <div style="padding: 4px 0; font-size: 10px;">
+                            <span class="online-status"></span>${user.username} 
+                            <span style="color: #999;">⭐${user.reputation || 0}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
         }
 
         // ============ AUTH FUNCTIONS ============
         function openLoginModal() {
             document.getElementById('login-modal').classList.add('active');
+            switchLoginTab('login');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
         }
 
-        function closeLoginModal() {
-            closeModal('login-modal');
+        function showLoginModal() {
+            openLoginModal();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
         function switchLoginTab(tab) {
@@ -928,16 +1289,24 @@
 
             const user = forumData.users.find(u => u.username === username && u.password === password);
             if (!user) {
-                alert('Неверное имя пользователя или пароль!');
+                alert('❌ Неверное имя пользователя или пароль!');
                 return;
             }
 
+            if (user.isBanned) {
+                alert('❌ Ваш аккаунт заблокирован администратором!');
+                return;
+            }
+
+            const greeting = user.isAdmin ? `✓ Добро пожаловать, администратор ${username}!` : 
+                            user.isModerator ? `✓ Добро пожаловать, модератор ${username}!` :
+                            `✓ Добро пожаловать, ${username}!`;
+            alert(greeting);
+
             setCurrentUser(user);
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-password').value = '';
             closeModal('login-modal');
             showView('forums');
-            alert(`✓ Добро пожаловать, ${username}!`);
+            addLog('Вход в систему', `Пользователь ${username}`);
         }
 
         function performRegister() {
@@ -947,29 +1316,41 @@
             const password2 = document.getElementById('register-password2').value;
 
             if (!username || !email || !password || !password2) {
-                alert('Заполните все поля!');
+                alert('❌ Заполните все поля!');
                 return;
             }
 
             if (username.length < 3 || username.length > 20) {
-                alert('Имя пользователя должно быть от 3 до 20 символов!');
+                alert('❌ Имя пользователя должно быть от 3 до 20 символов!');
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+                alert('❌ Имя пользователя может содержать только буквы, цифры, подчеркивание и дефис!');
                 return;
             }
 
             if (password.length < 6) {
-                alert('Пароль должен содержать минимум 6 символов!');
+                alert('❌ Пароль должен содержать минимум 6 символов!');
                 return;
             }
 
             if (password !== password2) {
-                alert('Пароли не совпадают!');
+                alert('❌ Пароли не совпадают!');
                 return;
             }
 
-            if (forumData.users.find(u => u.username === username)) {
-                alert('Это имя пользователя уже занято!');
+            if (forumData.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                alert('❌ Это имя пользователя уже занято!');
                 return;
             }
+
+            if (forumData.users.find(u => u.email === email)) {
+                alert('❌ Этот Email уже зарегистрирован!');
+                return;
+            }
+
+            const isAdmin = forumData.users.length === 0;
 
             const newUser = {
                 id: Date.now(),
@@ -978,12 +1359,26 @@
                 password: password,
                 avatar: username[0].toUpperCase(),
                 joinDate: new Date().toLocaleDateString('ru-RU'),
+                isAdmin: isAdmin,
+                isModerator: false,
+                isBanned: false,
+                canCreateThreads: true,
+                canPostReplies: true,
+                canSendMessages: true,
                 threads: [],
-                posts: []
+                posts: [],
+                reputation: 0,
+                lastActivity: new Date().getTime()
             };
 
             forumData.users.push(newUser);
             saveData();
+
+            if (isAdmin) {
+                alert(`✓ Регистрация успешна! Вы назначены администратором форума.`);
+            } else {
+                alert(`✓ Регистрация успешна! Теперь войдите с вашими учётными данными.`);
+            }
 
             document.getElementById('register-username').value = '';
             document.getElementById('register-email').value = '';
@@ -991,20 +1386,19 @@
             document.getElementById('register-password2').value = '';
 
             switchLoginTab('login');
-            alert(`✓ Регистрация успешна! Теперь войдите с вашими учётными данными.`);
+            addLog('Регистрация', `Новый пользователь: ${username}`);
         }
 
         function logout() {
+            if (currentUser) {
+                addLog('Выход из системы', currentUser.username);
+            }
             setCurrentUser(null);
             currentForum = null;
             currentThread = null;
+            onlineUsers = [];
             showView('forums');
-            alert('Вы вышли из системы');
-        }
-
-        function openLoginModal() {
-            document.getElementById('login-modal').classList.add('active');
-            switchLoginTab('login');
+            alert('✓ Вы вышли из системы');
         }
 
         // ============ FORUM FUNCTIONS ============
@@ -1012,30 +1406,32 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(view).classList.add('active');
 
-            if (view === 'messages' && !currentUser) {
-                alert('Пожалуйста, войдите в аккаунт!');
+            if ((view === 'messages' || view === 'profile' || view === 'admin') && !currentUser) {
+                alert('❌ Пожалуйста, войдите в аккаунт!');
                 openLoginModal();
                 showView('forums');
                 return;
             }
 
-            if (view === 'profile' && !currentUser) {
-                alert('Пожалуйста, войдите в аккаунт!');
-                openLoginModal();
+            if (view === 'admin' && !currentUser.isAdmin) {
+                alert('❌ У вас нет доступа к панели администратора!');
                 showView('forums');
                 return;
             }
 
             if (view === 'messages') {
                 updateMessages();
+                updateMessageBadge();
             } else if (view === 'profile') {
                 updateProfile();
+            } else if (view === 'admin') {
+                updateAdminPanel();
             }
         }
 
         function showForum(forumId) {
             if (!currentUser) {
-                alert('Пожалуйста, войдите в аккаунт для просмотра форумов!');
+                alert('❌ Пожалуйста, войдите в аккаунт!');
                 openLoginModal();
                 return;
             }
@@ -1044,7 +1440,15 @@
             const forum = forumData.forums[forumId];
             document.getElementById('forum-title').textContent = '📁 ' + forum.name;
 
+            renderThreadsList(forumId);
+
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('forum-view').classList.add('active');
+        }
+
+        function renderThreadsList(forumId) {
             const threadsList = document.getElementById('threads-list');
+            const forum = forumData.forums[forumId];
             threadsList.innerHTML = '';
 
             const availableThreads = forum.threads.filter(thread => {
@@ -1054,19 +1458,27 @@
                 return true;
             });
 
+            const pinnedThreads = availableThreads.filter(t => t.isPinned).sort((a, b) => b.views - a.views);
+            const regularThreads = availableThreads.filter(t => !t.isPinned).sort((a, b) => b.views - a.views);
+            const sortedThreads = [...pinnedThreads, ...regularThreads];
+
             if (availableThreads.length === 0) {
                 threadsList.innerHTML = '<div class="no-data">В этом форуме пока нет тем. Будьте первыми! 📝</div>';
             } else {
-                availableThreads.forEach((thread, idx) => {
+                sortedThreads.forEach((thread) => {
                     const originalIdx = forum.threads.indexOf(thread);
                     const postsCount = thread.posts.length;
                     const lockBadge = thread.isPrivate ? '<span class="lock-badge">🔒 ПРИВАТНАЯ</span>' : '';
+                    const pinBadge = thread.isPinned ? '<span class="lock-badge" style="background: #ccffcc; color: #00aa00;">📌 ЗАКРЕПЛЕНА</span>' : '';
+                    const lockThreadBadge = thread.isLocked ? '<span class="lock-badge" style="background: #ffcccc; color: #cc0000;">🔒 ЗАБЛОКИРОВАНА</span>' : '';
+                    const threadIcon = thread.isLocked ? '🔒' : (postsCount > 5 ? '🔥' : '💬');
+                    
                     threadsList.innerHTML += `
                         <div class="thread-item">
-                            <div class="thread-icon">${postsCount > 5 ? '🔥' : '💬'}</div>
+                            <div class="thread-icon">${threadIcon}</div>
                             <div class="thread-info">
-                                <h4 onclick="showThread(${forumId}, ${originalIdx})">${thread.title}</h4>
-                                <p>Автор: <strong>${thread.author}</strong> | ${thread.date} ${lockBadge}</p>
+                                <h4 onclick="showThread(${forumId}, ${originalIdx})" style="${thread.isPinned ? 'font-weight: bold; color: #ff6600;' : ''}">${escapeHtml(thread.title)}</h4>
+                                <p>👤 ${escapeHtml(thread.author)} | 📅 ${thread.date} | 👁️ ${thread.views || 0} просмотров ${lockBadge}${pinBadge}${lockThreadBadge}</p>
                             </div>
                             <div class="forum-stats">
                                 <strong>${postsCount}</strong><br><small>ответ.</small>
@@ -1076,19 +1488,60 @@
                     `;
                 });
             }
+        }
 
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('forum-view').classList.add('active');
+        function searchThreads(query) {
+            if (currentForum === null) return;
+            const threadsList = document.getElementById('threads-list');
+            const forum = forumData.forums[currentForum];
+            threadsList.innerHTML = '';
+
+            const availableThreads = forum.threads.filter(thread => {
+                if (thread.isPrivate) {
+                    return thread.allowedUsers && thread.allowedUsers.includes(currentUser.id);
+                }
+                return true;
+            });
+
+            const filtered = availableThreads.filter(t => 
+                t.title.toLowerCase().includes(query.toLowerCase()) ||
+                t.author.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                threadsList.innerHTML = '<div class="no-data">Темы не найдены 🔍</div>';
+                return;
+            }
+
+            filtered.forEach((thread) => {
+                const originalIdx = forum.threads.indexOf(thread);
+                const postsCount = thread.posts.length;
+                threadsList.innerHTML += `
+                    <div class="thread-item">
+                        <div class="thread-icon">💬</div>
+                        <div class="thread-info">
+                            <h4 onclick="showThread(${currentForum}, ${originalIdx})">${escapeHtml(thread.title)}</h4>
+                            <p>👤 ${escapeHtml(thread.author)} | 📅 ${thread.date}</p>
+                        </div>
+                        <div class="forum-stats">
+                            <strong>${postsCount}</strong><br><small>ответ.</small>
+                        </div>
+                        <button class="button" onclick="showThread(${currentForum}, ${originalIdx})">Открыть →</button>
+                    </div>
+                `;
+            });
         }
 
         function backToForums() {
             showView('forums');
             currentForum = null;
+            document.getElementById('thread-search').value = '';
         }
 
         function backToForum() {
             if (currentForum !== null) {
                 showForum(currentForum);
+                document.getElementById('thread-search').value = '';
             }
         }
 
@@ -1097,69 +1550,166 @@
             currentThread = threadId;
             const thread = forumData.forums[forumId].threads[threadId];
 
-            if (thread.isPrivate && (!thread.allowedUsers || !thread.allowedUsers.includes(currentUser.id))) {
-                alert('У вас нет доступа к этой теме!');
+            if (!currentUser && thread.isPrivate) {
+                alert('❌ Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
                 return;
             }
 
-            document.getElementById('thread-title').textContent = '💬 ' + thread.title;
+            if (thread.isPrivate && (!thread.allowedUsers || !thread.allowedUsers.includes(currentUser.id))) {
+                alert('❌ У вас нет доступа к этой теме!');
+                return;
+            }
+
+            thread.views = (thread.views || 0) + 1;
+            saveData();
+
+            const lockIcon = thread.isLocked ? '🔒' : '💬';
+            const pinIcon = thread.isPinned ? '📌' : '💬';
+            document.getElementById('thread-title').textContent = `${pinIcon} ${escapeHtml(thread.title)}`;
 
             const postsList = document.getElementById('posts-list');
             postsList.innerHTML = '';
 
-            thread.posts.forEach((post) => {
+            thread.posts.forEach((post, idx) => {
                 const posterUser = forumData.users.find(u => u.id === post.userId);
                 const posterName = posterUser ? posterUser.username : 'Удалённый пользователь';
                 const posterAvatar = posterUser ? posterUser.avatar : '?';
+                const reputation = posterUser ? (posterUser.reputation || 0) : 0;
+                const likesCount = post.likes || 0;
+                const isAuthor = currentUser && currentUser.id === post.userId;
+                const isAdmin = currentUser && currentUser.isAdmin;
+
+                let postActions = `👍 <span id="likes-${idx}">${likesCount}</span>`;
+                if (!thread.isLocked) {
+                    postActions += ` | <span class="post-action-link" onclick="likePost(${forumId}, ${threadId}, ${idx})">👍 Нравится</span>`;
+                    postActions += ` | <span class="post-action-link" onclick="openReplyToPostModal(${idx})">💬 Ответить</span>`;
+                }
+                if (isAuthor || isAdmin) {
+                    postActions += ` | <span class="post-action-link" onclick="deletePost(${forumId}, ${threadId}, ${idx})">🗑️ Удалить</span>`;
+                }
+                if (isAdmin && !isAuthor) {
+                    postActions += ` | <span class="post-action-link" onclick="warnUser('${posterName}')">⚠️ Предупредить</span>`;
+                }
 
                 postsList.innerHTML += `
                     <div class="post-item">
                         <div class="post-header">
-                            📌 ${posterName}
-                            <span>${post.date}</span>
+                            ${thread.isLocked ? '🔒 ЗАБЛОКИРОВАНА' : '📌'} ${escapeHtml(posterName)} (⭐ ${reputation})
+                            <span>${post.date} ${post.time || ''}</span>
                         </div>
                         <div class="post-body">
                             <div class="post-avatar">${posterAvatar}</div>
-                            <div class="post-content">${post.text}</div>
+                            <div class="post-content">${escapeHtml(post.text)}</div>
                         </div>
                         <div class="post-footer">
-                            ⭐ Профиль | ✉️ Сообщение | 🔗 Цитата
+                            ${postActions}
                         </div>
                     </div>
                 `;
             });
 
+            document.getElementById('reply-btn').style.display = thread.isLocked ? 'none' : 'block';
+            document.getElementById('pin-btn').style.display = currentUser && currentUser.isAdmin ? 'block' : 'none';
+            document.getElementById('lock-btn').style.display = currentUser && currentUser.isAdmin ? 'block' : 'none';
+
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('thread-view').classList.add('active');
+            addLog('Просмотр темы', thread.title);
+        }
+
+        function pinCurrentThread() {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('❌ Только администраторы могут закреплять темы!');
+                return;
+            }
+            const thread = forumData.forums[currentForum].threads[currentThread];
+            thread.isPinned = !thread.isPinned;
+            saveData();
+            showThread(currentForum, currentThread);
+            alert(thread.isPinned ? '📌 Тема закреплена!' : '📌 Крепление снято!');
+            addLog('Изменение статуса темы', `${thread.isPinned ? 'Закреплена' : 'Откреплена'}: ${thread.title}`);
+        }
+
+        function lockCurrentThread() {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('❌ Только администраторы могут блокировать темы!');
+                return;
+            }
+            const thread = forumData.forums[currentForum].threads[currentThread];
+            thread.isLocked = !thread.isLocked;
+            saveData();
+            showThread(currentForum, currentThread);
+            alert(thread.isLocked ? '🔒 Тема заблокирована!' : '🔓 Блокировка снята!');
+            addLog('Изменение блокировки темы', `${thread.isLocked ? 'Заблокирована' : 'Разблокирована'}: ${thread.title}`);
+        }
+
+        function deletePost(forumId, threadId, postIndex) {
+            if (!confirm('Вы уверены? Это удалит сообщение безвозвратно!')) return;
+
+            const post = forumData.forums[forumId].threads[threadId].posts[postIndex];
+            forumData.forums[forumId].threads[threadId].posts.splice(postIndex, 1);
+            saveData();
+            showThread(forumId, threadId);
+            alert('✓ Сообщение удалено!');
+            addLog('Удаление сообщения', 'Сообщение удалено');
+        }
+
+        function warnUser(username) {
+            const user = forumData.users.find(u => u.username === username);
+            if (!user) return;
+            user.warnings = (user.warnings || 0) + 1;
+            if (user.warnings >= 3) {
+                user.isBanned = true;
+                alert(`⚠️ Пользователь ${username} получил предупреждение (3/3). Аккаунт заблокирован!`);
+                addLog('Блокировка пользователя', `${username} заблокирован за нарушения`);
+            } else {
+                alert(`⚠️ Предупреждение отправлено ${username}! (${user.warnings}/3)`);
+                addLog('Предупреждение пользователю', `${username} получил предупреждение (${user.warnings}/3)`);
+            }
+            saveData();
         }
 
         function openNewThreadModal() {
             if (!currentUser) {
-                alert('Пожалуйста, войдите в аккаунт!');
+                alert('❌ Пожалуйста, войдите в аккаунт!');
                 openLoginModal();
+                return;
+            }
+            if (!currentUser.canCreateThreads) {
+                alert('❌ Вы не можете создавать темы!');
                 return;
             }
             updateUsersCheckboxes();
             document.getElementById('new-thread-modal').classList.add('active');
+            document.getElementById('thread-title-input').value = '';
+            document.getElementById('thread-text-input').value = '';
+            document.getElementById('thread-private').checked = false;
+            document.getElementById('private-users-select').style.display = 'none';
+            document.getElementById('title-counter').textContent = '0';
+            document.getElementById('content-counter').textContent = '0';
         }
 
         function updateUsersCheckboxes() {
             const container = document.getElementById('users-checkboxes');
             container.innerHTML = '';
             forumData.users.forEach(user => {
-                if (user.id !== currentUser.id) {
+                if (user.id !== currentUser.id && !user.isBanned) {
                     container.innerHTML += `
-                        <label style="display: block; margin: 3px 0;">
-                            <input type="checkbox" value="${user.id}" class="user-checkbox"> ${user.username}
+                        <label style="display: block; margin: 3px 0; font-size: 10px;">
+                            <input type="checkbox" value="${user.id}" class="user-checkbox"> ${escapeHtml(user.username)}
                         </label>
                     `;
                 }
             });
         }
 
-        document.getElementById('thread-private')?.addEventListener('change', function() {
-            document.getElementById('private-users-select').style.display = this.checked ? 'block' : 'none';
-        });
+        const threadPrivateCheckbox = document.getElementById('thread-private');
+        if (threadPrivateCheckbox) {
+            threadPrivateCheckbox.addEventListener('change', function() {
+                document.getElementById('private-users-select').style.display = this.checked ? 'block' : 'none';
+            });
+        }
 
         function createNewThread() {
             if (!currentUser) return;
@@ -1170,7 +1720,12 @@
             const isPrivate = document.getElementById('thread-private').checked;
 
             if (!title || !text) {
-                alert('Заполните все поля!');
+                alert('❌ Заполните все поля!');
+                return;
+            }
+
+            if (title.length < 5) {
+                alert('❌ Заголовок должен содержать минимум 5 символов!');
                 return;
             }
 
@@ -1178,7 +1733,7 @@
             if (isPrivate) {
                 const checkboxes = document.querySelectorAll('.user-checkbox:checked');
                 if (checkboxes.length === 0) {
-                    alert('Выберите хотя бы одного пользователя для приватной темы!');
+                    alert('❌ Выберите хотя бы одного пользователя для приватной темы!');
                     return;
                 }
                 checkboxes.forEach(cb => {
@@ -1192,34 +1747,78 @@
                 author: currentUser.username,
                 authorId: currentUser.id,
                 date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}),
                 isPrivate: isPrivate,
-                allowedUsers: isPrivate ? allowedUsers : null,
+                allowedUsers: allowedUsers,
+                isPinned: false,
+                isLocked: false,
                 posts: [{
-                    id: Date.now(),
                     userId: currentUser.id,
                     text: text,
-                    date: new Date().toLocaleString('ru-RU')
-                }]
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}),
+                    likes: 0
+                }],
+                views: 0,
+                reputation: 0,
+                tags: []
             };
 
             forumData.forums[forumId].threads.push(newThread);
+            currentUser.threads.push(newThread.id);
             saveData();
-
-            document.getElementById('thread-title-input').value = '';
-            document.getElementById('thread-text-input').value = '';
-            document.getElementById('thread-private').checked = false;
+            updateStatistics();
 
             closeModal('new-thread-modal');
-            alert('✓ Тема создана успешно!');
+            alert('✓ Тема успешно создана!');
             showForum(forumId);
+            addLog('Создание новой темы', title);
+        }
+
+        function likePost(forumId, threadId, postIndex) {
+            if (!currentUser) {
+                alert('❌ Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
+                return;
+            }
+            const post = forumData.forums[forumId].threads[threadId].posts[postIndex];
+            post.likes = (post.likes || 0) + 1;
+            
+            const posterUser = forumData.users.find(u => u.id === post.userId);
+            if (posterUser) {
+                posterUser.reputation = (posterUser.reputation || 0) + 1;
+            }
+            
+            saveData();
+            showThread(forumId, threadId);
         }
 
         function openReplyModal() {
             if (!currentUser) {
-                alert('Пожалуйста, войдите в аккаунт!');
+                alert('❌ Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
                 return;
             }
+            if (!currentUser.canPostReplies) {
+                alert('❌ Вы не можете отвечать на темы!');
+                return;
+            }
+            if (currentForum === null || currentThread === null) {
+                alert('❌ Ошибка: тема не выбрана');
+                return;
+            }
+            const thread = forumData.forums[currentForum].threads[currentThread];
+            if (thread.isLocked) {
+                alert('🔒 Эта тема заблокирована, ответить невозможно!');
+                return;
+            }
+            document.getElementById('reply-text').value = '';
+            document.getElementById('reply-counter').textContent = '0';
             document.getElementById('reply-modal').classList.add('active');
+        }
+
+        function openReplyToPostModal(postIndex) {
+            openReplyModal();
         }
 
         function addReply() {
@@ -1227,40 +1826,49 @@
 
             const text = document.getElementById('reply-text').value.trim();
             if (!text) {
-                alert('Введите текст сообщения!');
+                alert('❌ Введите текст сообщения!');
                 return;
             }
 
             const thread = forumData.forums[currentForum].threads[currentThread];
+            const now = new Date();
             thread.posts.push({
                 id: Date.now(),
                 userId: currentUser.id,
                 text: text,
-                date: new Date().toLocaleString('ru-RU')
+                date: now.toLocaleDateString('ru-RU'),
+                time: now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}),
+                likes: 0
             });
 
+            currentUser.posts.push(thread.id);
             saveData();
-            document.getElementById('reply-text').value = '';
             closeModal('reply-modal');
             showThread(currentForum, currentThread);
             alert('✓ Ответ добавлен!');
+            updateStatistics();
+            addLog('Ответ на тему', thread.title);
         }
 
         // ============ MESSAGES FUNCTIONS ============
         function openSendMessageModal() {
             if (!currentUser) {
-                alert('Пожалуйста, войдите в аккаунт!');
+                alert('❌ Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
                 return;
             }
 
             const select = document.getElementById('message-recipient');
             select.innerHTML = '<option value="">Выберите пользователя...</option>';
             forumData.users.forEach(user => {
-                if (user.id !== currentUser.id) {
-                    select.innerHTML += `<option value="${user.id}">${user.username}</option>`;
+                if (user.id !== currentUser.id && !user.isBanned) {
+                    select.innerHTML += `<option value="${user.id}">${escapeHtml(user.username)}</option>`;
                 }
             });
 
+            document.getElementById('message-subject').value = '';
+            document.getElementById('message-text').value = '';
+            document.getElementById('message-counter').textContent = '0';
             document.getElementById('send-message-modal').classList.add('active');
         }
 
@@ -1272,13 +1880,18 @@
             const text = document.getElementById('message-text').value.trim();
 
             if (!recipientId || !subject || !text) {
-                alert('Заполните все поля!');
+                alert('❌ Заполните все поля!');
                 return;
             }
 
             const recipient = forumData.users.find(u => u.id === recipientId);
             if (!recipient) {
-                alert('Пользователь не найден!');
+                alert('❌ Пользователь не найден!');
+                return;
+            }
+
+            if (recipient.isBanned) {
+                alert('❌ Этот пользователь заблокирован!');
                 return;
             }
 
@@ -1289,43 +1902,98 @@
                 to: recipientId,
                 subject: subject,
                 text: text,
-                date: new Date().toLocaleString('ru-RU'),
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}),
                 read: false
             });
 
             saveData();
-            document.getElementById('message-subject').value = '';
-            document.getElementById('message-text').value = '';
             closeModal('send-message-modal');
             alert('✓ Сообщение отправлено!');
+            updateStatistics();
+            addLog('Отправка приватного сообщения', `От: ${currentUser.username}, Кому: ${recipient.username}`);
         }
 
         function updateMessages() {
             if (!currentUser) return;
 
-            const messagesList = document.getElementById('messages-list');
             const messageStatus = document.getElementById('message-status');
+            const userMessages = forumData.messages.filter(msg => msg.to === currentUser.id);
+            const unreadCount = userMessages.filter(msg => !msg.read).length;
 
-            messageStatus.innerHTML = `<strong>Привет, ${currentUser.username}!</strong> Здесь показаны все сообщения, отправленные вам.`;
+            messageStatus.innerHTML = `
+                <strong>📊 Статистика сообщений:</strong> Всего: ${userMessages.length} | Непрочитанных: <span style="color: #ff0000;">${unreadCount}</span>
+            `;
 
-            const myMessages = forumData.messages.filter(m => m.to === currentUser.id);
+            renderMessagesList(userMessages);
+        }
 
-            if (myMessages.length === 0) {
-                messagesList.innerHTML = '<div class="no-data">У вас нет сообщений</div>';
+        function renderMessagesList(messages) {
+            const messagesList = document.getElementById('messages-list');
+            messagesList.innerHTML = '';
+
+            if (messages.length === 0) {
+                messagesList.innerHTML = '<div class="no-data">Нет сообщений 📭</div>';
                 return;
             }
 
-            messagesList.innerHTML = '';
-            myMessages.forEach(msg => {
+            const sorted = messages.sort((a, b) => new Date(b.date) - new Date(a.date));
+            sorted.forEach((msg, idx) => {
+                const fromUser = forumData.users.find(u => u.id === msg.from);
+                const unreadClass = msg.read ? '' : 'message-unread';
                 messagesList.innerHTML += `
-                    <div class="message-item" onclick="alert('От: ${msg.fromName}\\nТема: ${msg.subject}\\n\\n${msg.text}')">
-                        <div class="message-from">От: ${msg.fromName}</div>
-                        <div style="font-weight: bold; color: #333;">${msg.subject}</div>
-                        <div class="message-text">${msg.text.substring(0, 100)}${msg.text.length > 100 ? '...' : ''}</div>
-                        <div class="message-time">${msg.date}</div>
+                    <div class="message-item ${unreadClass}">
+                        <div class="message-from">От: ${escapeHtml(msg.fromName)} (${msg.read ? '✓ Прочитано' : '⊙ Новое'})</div>
+                        <div class="message-subject">📌 ${escapeHtml(msg.subject)}</div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                        <div class="message-time">
+                            ${msg.date} ${msg.time} | 
+                            <span class="post-action-link" onclick="markMessageAsRead(${msg.id})">✓ Отметить как прочитанное</span> |
+                            <span class="post-action-link" onclick="deleteMessage(${msg.id})">🗑️ Удалить</span> |
+                            <span class="post-action-link" onclick="replyToMessage('${escapeHtml(msg.fromName)}')">💬 Ответить</span>
+                        </div>
                     </div>
                 `;
             });
+        }
+
+        function searchMessages(query) {
+            if (!currentUser) return;
+            const userMessages = forumData.messages.filter(msg => msg.to === currentUser.id);
+            const filtered = userMessages.filter(msg =>
+                msg.fromName.toLowerCase().includes(query.toLowerCase()) ||
+                msg.subject.toLowerCase().includes(query.toLowerCase()) ||
+                msg.text.toLowerCase().includes(query.toLowerCase())
+            );
+            renderMessagesList(filtered);
+        }
+
+        function markMessageAsRead(msgId) {
+            const msg = forumData.messages.find(m => m.id === msgId);
+            if (msg) {
+                msg.read = true;
+                saveData();
+                updateMessages();
+                updateMessageBadge();
+            }
+        }
+
+        function deleteMessage(msgId) {
+            if (!confirm('Удалить сообщение?')) return;
+            forumData.messages = forumData.messages.filter(m => m.id !== msgId);
+            saveData();
+            updateMessages();
+            updateStatistics();
+            alert('✓ Сообщение удалено!');
+        }
+
+        function replyToMessage(username) {
+            if (forumData.users.find(u => u.username === username)) {
+                const select = document.getElementById('message-recipient');
+                select.value = forumData.users.find(u => u.username === username).id;
+            }
+            document.getElementById('message-subject').value = `Re: `;
+            document.getElementById('send-message-modal').classList.add('active');
         }
 
         // ============ PROFILE FUNCTIONS ============
@@ -1333,147 +2001,186 @@
             if (!currentUser) return;
 
             const profileStatus = document.getElementById('profile-status');
+            profileStatus.innerHTML = `
+                <strong>👤 ${escapeHtml(currentUser.username)}</strong> | 
+                ⭐ Репутация: ${currentUser.reputation || 0} |
+                📝 Тем: ${currentUser.threads.length} |
+                💬 Постов: ${currentUser.posts.length}
+            `;
+
             const profileContent = document.getElementById('profile-content');
-
-            profileStatus.innerHTML = `<strong>Профиль пользователя:</strong> ${currentUser.username}`;
-
-            const userThreads = forumData.forums.reduce((acc, forum) => {
-                return acc + forum.threads.filter(t => t.authorId === currentUser.id).length;
-            }, 0);
-
-            const userPosts = forumData.forums.reduce((acc, forum) => {
-                return acc + forum.threads.reduce((acc2, thread) => {
-                    return acc2 + thread.posts.filter(p => p.userId === currentUser.id).length;
-                }, 0);
-            }, 0);
-
             profileContent.innerHTML = `
-                <div style="margin-bottom: 15px;">
-                    <div style="font-size: 18px; margin-bottom: 10px;">
-                        <span style="font-size: 40px; font-weight: bold; color: #1f5b9c;">${currentUser.avatar}</span>
-                    </div>
-                    <p><strong>Имя:</strong> ${currentUser.username}</p>
-                    <p><strong>Email:</strong> ${currentUser.email}</p>
-                    <p><strong>Дата регистрации:</strong> ${currentUser.joinDate}</p>
-                    <p><strong>Создано тем:</strong> ${userThreads}</p>
-                    <p><strong>Создано постов:</strong> ${userPosts}</p>
+                <div style="background: white; padding: 15px; border-radius: 3px;">
+                    <p><strong>📧 Email:</strong> ${escapeHtml(currentUser.email)}</p>
+                    <p><strong>📅 Дата регистрации:</strong> ${currentUser.joinDate}</p>
+                    <p><strong>📊 Статус:</strong> ${currentUser.isAdmin ? '👑 Администратор' : (currentUser.isModerator ? '🛡️ Модератор' : 'Участник')}</p>
+                    <p><strong>⭐ Репутация:</strong> ${currentUser.reputation || 0}</p>
+                    <p><strong>📝 Создано тем:</strong> ${currentUser.threads.length}</p>
+                    <p><strong>💬 Написано постов:</strong> ${currentUser.posts.length}</p>
+                    <p><strong>🛑 Предупреждений:</strong> ${currentUser.warnings || 0}/3</p>
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 15px 0;">
+                    <p style="font-size: 10px; color: #999;">Avatar: <strong>${currentUser.avatar}</strong></p>
                 </div>
-                <button class="button danger" onclick="logout()">🚪 Выход</button>
             `;
         }
 
-        // ============ UI UPDATE FUNCTIONS ============
-        function updateHeader() {
-            const headerStatus = document.getElementById('header-status');
-            const logoutBtn = document.getElementById('logout-btn');
-            const createThreadBtn = document.getElementById('create-thread-btn');
-            const replyBtn = document.getElementById('reply-btn');
+        // ============ ADMIN FUNCTIONS ============
+        function switchAdminTab(tab) {
+            document.getElementById('users-tab').style.display = tab === 'users' ? 'block' : 'none';
+            document.getElementById('settings-tab').style.display = tab === 'settings' ? 'block' : 'none';
+            document.getElementById('logs-tab').style.display = tab === 'logs' ? 'block' : 'none';
 
-            if (currentUser) {
-                headerStatus.innerHTML = `<p>Вы вошли как:</p><p><strong>${currentUser.username}</strong></p>`;
-                logoutBtn.style.display = 'inline-block';
-                if (createThreadBtn) createThreadBtn.style.display = 'inline-block';
-                if (replyBtn) replyBtn.style.display = 'inline-block';
-            } else {
-                headerStatus.innerHTML = '<p>Вы не вошли</p>';
-                logoutBtn.style.display = 'none';
-                if (createThreadBtn) createThreadBtn.style.display = 'none';
-                if (replyBtn) replyBtn.style.display = 'none';
-            }
-
-            updateStats();
-            updateLatestUsers();
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
         }
 
-        function updateStats() {
-            document.getElementById('total-users').textContent = forumData.users.length;
-            document.getElementById('online-users').textContent = currentUser ? 1 : 0;
-
-            let totalThreads = 0;
-            let totalPosts = 0;
-
-            forumData.forums.forEach((forum, idx) => {
-                const accessibleThreads = forum.threads.filter(t => {
-                    if (t.isPrivate) {
-                        return currentUser && t.allowedUsers && t.allowedUsers.includes(currentUser.id);
-                    }
-                    return true;
-                });
-
-                totalThreads += accessibleThreads.length;
-                document.getElementById(`forum-${idx}-threads`).textContent = accessibleThreads.length;
-
-                let forumPosts = 0;
-                accessibleThreads.forEach(thread => {
-                    forumPosts += thread.posts.length;
-                });
-
-                totalPosts += forumPosts;
-                document.getElementById(`forum-${idx}-posts`).textContent = forumPosts;
-            });
-
-            document.getElementById('total-threads').textContent = totalThreads;
-            document.getElementById('total-posts').textContent = totalPosts;
+        function updateAdminPanel() {
+            updateAdminUsersList();
+            updateAdminLogs();
+            updateStatistics();
         }
 
-        function updateLatestUsers() {
-            const container = document.getElementById('latest-users');
+        function updateAdminUsersList() {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '';
+
             if (forumData.users.length === 0) {
-                container.innerHTML = '<p style="color: #999;">Нет пользователей</p>';
+                usersList.innerHTML = '<div class="no-data">Нет пользователей</div>';
                 return;
             }
 
-            const latestUsers = forumData.users.slice(-5).reverse();
-            container.innerHTML = '';
-            latestUsers.forEach(user => {
-                container.innerHTML += `<a onclick="alert('${user.username}\\nЭлектронная почта: ${user.email}\\nЗарегистрирован: ${user.joinDate}')">${user.username}</a>`;
+            forumData.users.forEach(user => {
+                const statusBadge = user.isAdmin ? '👑' : (user.isModerator ? '🛡️' : '👤');
+                const banBadge = user.isBanned ? '🚫' : '';
+                usersList.innerHTML += `
+                    <div class="user-item">
+                        <div>
+                            ${statusBadge} ${escapeHtml(user.username)} ${banBadge}
+                            <span style="color: #999; font-size: 9px;">⭐${user.reputation || 0}</span>
+                        </div>
+                        <div class="user-item-actions">
+                            ${!user.isAdmin ? `<button class="button" style="padding: 2px 6px; font-size: 10px;" onclick="promoteUser(${user.id})">Модератор</button>` : ''}
+                            <button class="button ${user.isBanned ? 'danger' : ''}" style="padding: 2px 6px; font-size: 10px;" onclick="banUser(${user.id})">${user.isBanned ? 'Разбанить' : 'Бан'}</button>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+        function promoteUser(userId) {
+            const user = forumData.users.find(u => u.id === userId);
+            if (!user) return;
+            user.isModerator = !user.isModerator;
+            saveData();
+            updateAdminUsersList();
+            alert(user.isModerator ? `✓ ${user.username} назначен модератором!` : `${user.username} снят с должности модератора!`);
+            addLog('Изменение роли пользователя', `${user.username}: ${user.isModerator ? 'Модератор' : 'Участник'}`);
         }
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
+        function banUser(userId) {
+            const user = forumData.users.find(u => u.id === userId);
+            if (!user) return;
+            if (user.isAdmin) {
+                alert('❌ Нельзя забанить администратора!');
+                return;
             }
-        };
-
-        // ============ INITIALIZATION ============
-        function init() {
-            loadData();
-            currentUser = getCurrentUser();
-            updateHeader();
-
-            // Добавляем примерных пользователей если их нет
-            if (forumData.users.length === 0) {
-                forumData.users = [
-                    { id: 1, username: 'Admin', email: 'admin@forum.com', password: 'admin', avatar: 'A', joinDate: '2024-01-01' },
-                    { id: 2, username: 'User2007', email: 'user@forum.com', password: '123456', avatar: 'U', joinDate: '2024-01-15' },
-                    { id: 3, username: 'TestUser', email: 'test@forum.com', password: 'test123', avatar: 'T', joinDate: '2024-01-18' }
-                ];
-
-                // Добавляем примерные темы
-                forumData.forums[0].threads = [
-                    {
-                        id: 1,
-                        title: 'Добро пожаловать на форум!',
-                        author: 'Admin',
-                        authorId: 1,
-                        date: '2024-01-20',
-                        isPrivate: false,
-                        posts: [
-                            { id: 1, userId: 1, text: 'Привет всем! Добро пожаловать на наш ретро-форум 2007 года!', date: '2024-01-20 10:00' }
-                        ]
-                    }
-                ];
-
-                saveData();
-            }
+            user.isBanned = !user.isBanned;
+            saveData();
+            updateAdminUsersList();
+            alert(user.isBanned ? `✓ ${user.username} заблокирован!` : `✓ ${user.username} разблокирован!`);
+            addLog('Блокировка пользователя', `${user.username}: ${user.isBanned ? 'Заблокирован' : 'Разблокирован'}`);
         }
 
-        init();
+        function searchUsers(query) {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '';
+
+            const filtered = forumData.users.filter(u => 
+                u.username.toLowerCase().includes(query.toLowerCase()) ||
+                u.email.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                usersList.innerHTML = '<div class="no-data">Пользователи не найдены</div>';
+                return;
+            }
+
+            filtered.forEach(user => {
+                const statusBadge = user.isAdmin ? '👑' : (user.isModerator ? '🛡️' : '👤');
+                const banBadge = user.isBanned ? '🚫' : '';
+                usersList.innerHTML += `
+                    <div class="user-item">
+                        <div>
+                            ${statusBadge} ${escapeHtml(user.username)} ${banBadge}
+                        </div>
+                        <div class="user-item-actions">
+                            ${!user.isAdmin ? `<button class="button" style="padding: 2px 6px; font-size: 10px;" onclick="promoteUser(${user.id})">Мод</button>` : ''}
+                            <button class="button ${user.isBanned ? 'danger' : ''}" style="padding: 2px 6px; font-size: 10px;" onclick="banUser(${user.id})">${user.isBanned ? 'Разбан' : 'Бан'}</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateAdminLogs() {
+            const logsList = document.getElementById('logs-list');
+            logsList.innerHTML = '';
+
+            if (forumData.logs.length === 0) {
+                logsList.innerHTML = '<p style="color: #999; font-size: 11px;">Логи пусты</p>';
+                return;
+            }
+
+            const recentLogs = forumData.logs.slice(-20).reverse();
+            recentLogs.forEach(log => {
+                logsList.innerHTML += `
+                    <div style="padding: 6px; border-bottom: 1px solid #eee; font-size: 10px;">
+                        <strong>${log.timestamp}</strong> - ${escapeHtml(log.user)}: ${escapeHtml(log.action)}
+                        ${log.details ? `<br><em>${escapeHtml(log.details)}</em>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function clearAllData() {
+            forumData.users = [];
+            forumData.forums = [
+                { id: 0, name: 'Основное обсуждение', desc: 'Темы общего характера и новости', threads: [] },
+                { id: 1, name: 'Технологии', desc: 'Обсуждение ПК и интернета', threads: [] },
+                { id: 2, name: 'Развлечения', desc: 'Игры, кино и хобби', threads: [] }
+            ];
+            forumData.messages = [];
+            forumData.logs = [];
+            saveData();
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            alert('🗑️ База данных полностью очищена!');
+            location.reload();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(forumData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `forum-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            alert('✓ Данные экспортированы!');
+            addLog('Экспорт данных', 'Резервная копия создана');
+        }
+
+        // ============ UTILITY FUNCTIONS ============
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
     </script>
 </body>
 </html>
