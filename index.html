@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ретро Форум 2007 Pro - С Аккаунтами</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Verdana, Arial, sans-serif;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect fill="%23c0c0c0" width="4" height="4"/><rect fill="%23999" x="0" y="0" width="2" height="2"/></svg>');
+            background-color: #b0b0b0;
+            color: #333;
+            line-height: 1.4;
+            font-size: 12px;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(to bottom, #1f5b9c, #1a4d7a);
+            border: 2px solid #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 10px;
+            color: #ddd;
+            margin: 0;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 11px;
+        }
+
+        .header-right p {
+            margin: 2px 0;
+            color: #ddd;
+        }
+
+        .header-right strong {
+            color: #ffff00;
+        }
+
+        .nav-bar {
+            background: linear-gradient(to bottom, #8b8b8b, #707070);
+            border: 2px solid #333;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #000;
+            flex-wrap: wrap;
+        }
+
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 4px 10px;
+            background: linear-gradient(to bottom, #a0a0a0, #808080);
+            border: 2px outset #dfdfdf;
+            border-radius: 3px;
+            font-size: 11px;
+            transition: all 0.1s;
+        }
+
+        .nav-bar a:hover {
+            background: linear-gradient(to bottom, #b0b0b0, #909090);
+            border-style: inset;
+        }
+
+        .nav-bar a.active {
+            background: linear-gradient(to bottom, #707070, #505050);
+            border-style: inset;
+            color: #ffff00;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 10px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-panel {
+            background: #e8e8e8;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #000;
+        }
+
+        .panel-header {
+            background: linear-gradient(to right, #000080, #1084d7);
+            color: white;
+            padding: 8px 10px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .panel-body {
+            padding: 10px;
+            background: #f5f5f5;
+            font-size: 11px;
+        }
+
+        .panel-body p {
+            margin: 5px 0;
+        }
+
+        .panel-body a {
+            display: block;
+            color: #000080;
+            text-decoration: underline;
+            cursor: pointer;
+            margin: 3px 0;
+            padding: 2px;
+        }
+
+        .panel-body a:hover {
+            background: #e0e0e0;
+        }
+
+        .forum-section {
+            background: #e8e8e8;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #000;
+        }
+
+        .section-header {
+            background: linear-gradient(to right, #000080, #1084d7);
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-body {
+            padding: 0;
+        }
+
+        .forum-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 70px 70px;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid #dfdfdf;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .forum-item:hover {
+            background: #f0f0f0;
+        }
+
+        .forum-item:last-child {
+            border-bottom: none;
+        }
+
+        .forum-icon {
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .forum-info h3 {
+            font-size: 12px;
+            margin: 0 0 2px 0;
+            color: #000080;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .forum-info h3:hover {
+            color: #1084d7;
+        }
+
+        .forum-info p {
+            font-size: 10px;
+            margin: 0;
+            color: #666;
+        }
+
+        .forum-stats {
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .thread-item {
+            display: grid;
+            grid-template-columns: 30px 1fr 50px 70px;
+            gap: 8px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #dfdfdf;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .thread-item:hover {
+            background: #f0f0f0;
+        }
+
+        .thread-item:last-child {
+            border-bottom: none;
+        }
+
+        .thread-icon {
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .thread-info h4 {
+            font-size: 11px;
+            margin: 0 0 2px 0;
+            color: #000080;
+            cursor: pointer;
+        }
+
+        .thread-info h4:hover {
+            color: #1084d7;
+        }
+
+        .thread-info p {
+            font-size: 9px;
+            margin: 0;
+            color: #666;
+        }
+
+        .lock-badge {
+            background: #ffcccc;
+            color: #cc0000;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-size: 9px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .button {
+            background: linear-gradient(to bottom, #c0c0c0, #a0a0a0);
+            border: 2px outset #dfdfdf;
+            color: #000;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            border-radius: 3px;
+            transition: all 0.1s;
+        }
+
+        .button:hover {
+            background: linear-gradient(to bottom, #d0d0d0, #b0b0b0);
+        }
+
+        .button:active {
+            border-style: inset;
+            background: linear-gradient(to bottom, #a0a0a0, #c0c0c0);
+        }
+
+        .button.primary {
+            background: linear-gradient(to bottom, #1f5b9c, #1a4d7a);
+            color: white;
+            border-color: #fff;
+        }
+
+        .button.primary:hover {
+            background: linear-gradient(to bottom, #2a6aad, #1f5b9c);
+        }
+
+        .button.danger {
+            background: linear-gradient(to bottom, #cc0000, #990000);
+            color: white;
+        }
+
+        .button.danger:hover {
+            background: linear-gradient(to bottom, #dd0000, #aa0000);
+        }
+
+        .input-field {
+            border: 2px inset #dfdfdf;
+            padding: 4px 6px;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 11px;
+            background: white;
+            color: #000;
+        }
+
+        .textarea {
+            border: 2px inset #dfdfdf;
+            padding: 6px 8px;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 11px;
+            background: white;
+            color: #000;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+        }
+
+        .post-item {
+            background: #f0f0f0;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            margin-bottom: 10px;
+        }
+
+        .post-header {
+            background: linear-gradient(to right, #a0a0a0, #808080);
+            color: white;
+            padding: 6px 10px;
+            font-weight: bold;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .post-body {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1f5b9c, #1a4d7a);
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .post-content {
+            flex: 1;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .post-footer {
+            background: #e8e8e8;
+            padding: 6px 10px;
+            font-size: 9px;
+            color: #666;
+            border-top: 1px solid #dfdfdf;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #c0c0c0;
+            border: 3px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #000;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(to right, #000080, #1084d7);
+            color: white;
+            padding: 4px 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .modal-close {
+            background: linear-gradient(to bottom, #c0c0c0, #a0a0a0);
+            border: 2px outset #dfdfdf;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .modal-close:active {
+            border-style: inset;
+        }
+
+        .modal-body {
+            padding: 12px;
+            background: #c0c0c0;
+        }
+
+        .no-data {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            background: white;
+            font-size: 12px;
+        }
+
+        .message-item {
+            background: white;
+            border: 1px solid #dfdfdf;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 3px;
+        }
+
+        .message-item:hover {
+            background: #f5f5f5;
+        }
+
+        .message-from {
+            font-weight: bold;
+            color: #000080;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .message-text {
+            font-size: 11px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 9px;
+            color: #999;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .action-bar {
+            background: linear-gradient(to bottom, #8b8b8b, #707070);
+            border: 2px solid #333;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #000;
+        }
+
+        .user-status {
+            padding: 10px;
+            background: #f0f0f0;
+            border: 1px solid #dfdfdf;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .user-status strong {
+            color: #000080;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-left, .header-right {
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>🖥️ Ретро Форум 2007 Pro</h1>
+                <p>С системой аккаунтов и приватными сообщениями</p>
+            </div>
+            <div class="header-right" id="header-status">
+                <p>Вы не вошли</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a class="nav-item active" onclick="showView('forums')">📂 Форумы</a>
+            <a class="nav-item" onclick="showView('messages')">✉️ Сообщения</a>
+            <a class="nav-item" onclick="showView('profile')">👤 Профиль</a>
+            <a class="nav-item" onclick="showLoginModal()">🔓 Вход/Регистрация</a>
+            <a class="nav-item" onclick="logout()" id="logout-btn" style="display:none;">🚪 Выход</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-panel">
+                    <div class="panel-header">📊 Статистика</div>
+                    <div class="panel-body">
+                        <p><strong>Всего пользователей:</strong> <span id="total-users">0</span></p>
+                        <p><strong>Онлайн:</strong> <span id="online-users">0</span></p>
+                        <p><strong>Тем:</strong> <span id="total-threads">0</span></p>
+                        <p><strong>Сообщений:</strong> <span id="total-posts">0</span></p>
+                    </div>
+                </div>
+
+                <div class="sidebar-panel">
+                    <div class="panel-header">👥 Последние пользователи</div>
+                    <div class="panel-body" id="latest-users">
+                        <p style="color: #999;">Нет пользователей</p>
+                    </div>
+                </div>
+
+                <div class="sidebar-panel">
+                    <div class="panel-header">ℹ️ Информация</div>
+                    <div class="panel-body">
+                        <p>Добро пожаловать на ретро-форум в стиле 2007 года!</p>
+                        <p>Здесь вы можете обсуждать интересующие вас темы, писать приватные сообщения и взаимодействовать с другими пользователями.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Forums View -->
+                <div id="forums" class="view active">
+                    <div class="forum-section">
+                        <div class="section-header">📋 Категории форума</div>
+                        <div class="section-body" id="forums-list">
+                            <div class="forum-item">
+                                <div class="forum-icon">📁</div>
+                                <div class="forum-info">
+                                    <h3 onclick="showForum(0)">Основное обсуждение</h3>
+                                    <p>Темы общего характера и новости</p>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-0-threads">0</strong><br><small>тем</small>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-0-posts">0</strong><br><small>постов</small>
+                                </div>
+                            </div>
+                            <div class="forum-item">
+                                <div class="forum-icon">💻</div>
+                                <div class="forum-info">
+                                    <h3 onclick="showForum(1)">Технологии</h3>
+                                    <p>Обсуждение ПК и интернета</p>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-1-threads">0</strong><br><small>тем</small>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-1-posts">0</strong><br><small>постов</small>
+                                </div>
+                            </div>
+                            <div class="forum-item">
+                                <div class="forum-icon">🎮</div>
+                                <div class="forum-info">
+                                    <h3 onclick="showForum(2)">Развлечения</h3>
+                                    <p>Игры, кино и хобби</p>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-2-threads">0</strong><br><small>тем</small>
+                                </div>
+                                <div class="forum-stats">
+                                    <strong id="forum-2-posts">0</strong><br><small>постов</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forum Threads View -->
+                <div id="forum-view" class="view" style="display:none;">
+                    <div class="action-bar">
+                        <button class="button" onclick="backToForums()">← Назад</button>
+                        <button class="button primary" onclick="openNewThreadModal()" id="create-thread-btn">📝 Новая тема</button>
+                    </div>
+                    <div class="forum-section">
+                        <div class="section-header" id="forum-title">Темы форума</div>
+                        <div class="section-body" id="threads-list"></div>
+                    </div>
+                </div>
+
+                <!-- Thread View -->
+                <div id="thread-view" class="view" style="display:none;">
+                    <div class="action-bar">
+                        <button class="button" onclick="backToForum()">← К форуму</button>
+                    </div>
+                    <div class="forum-section">
+                        <div class="section-header" id="thread-title">Тема</div>
+                        <div class="section-body" id="posts-list"></div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="button primary" onclick="openReplyModal()" id="reply-btn">📝 Ответить</button>
+                    </div>
+                </div>
+
+                <!-- Messages View -->
+                <div id="messages" class="view" style="display:none;">
+                    <div class="user-status" id="message-status"></div>
+                    <div class="action-bar">
+                        <button class="button primary" onclick="openSendMessageModal()">✉️ Новое сообщение</button>
+                    </div>
+                    <div class="forum-section">
+                        <div class="section-header">💌 Входящие сообщения</div>
+                        <div class="section-body" id="messages-list"></div>
+                    </div>
+                </div>
+
+                <!-- Profile View -->
+                <div id="profile" class="view" style="display:none;">
+                    <div class="user-status" id="profile-status"></div>
+                    <div class="forum-section">
+                        <div class="section-header">👤 Профиль пользователя</div>
+                        <div class="section-body" id="profile-content" style="padding: 12px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Register Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="login-title">🔓 Вход / Регистрация</span>
+                <div class="modal-close" onclick="closeModal('login-modal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 15px;">
+                    <button class="button" style="margin-right: 10px;" onclick="switchLoginTab('login')">Вход</button>
+                    <button class="button" onclick="switchLoginTab('register')">Регистрация</button>
+                </div>
+
+                <!-- Login Tab -->
+                <div id="login-tab">
+                    <div class="form-group">
+                        <label>Имя пользователя:</label>
+                        <input type="text" class="input-field" id="login-username" placeholder="Введите имя пользователя..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль:</label>
+                        <input type="password" class="input-field" id="login-password" placeholder="Введите пароль..." style="width: 100%;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="button primary" onclick="performLogin()">✓ Войти</button>
+                        <button class="button" onclick="closeModal('login-modal')">✕ Отмена</button>
+                    </div>
+                </div>
+
+                <!-- Register Tab -->
+                <div id="register-tab" style="display:none;">
+                    <div class="form-group">
+                        <label>Имя пользователя:</label>
+                        <input type="text" class="input-field" id="register-username" placeholder="3-20 символов..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" class="input-field" id="register-email" placeholder="your@email.com" style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль:</label>
+                        <input type="password" class="input-field" id="register-password" placeholder="Минимум 6 символов..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Подтверждение пароля:</label>
+                        <input type="password" class="input-field" id="register-password2" placeholder="Повторите пароль..." style="width: 100%;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="button primary" onclick="performRegister()">✓ Зарегистрироваться</button>
+                        <button class="button" onclick="closeModal('login-modal')">✕ Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Thread Modal -->
+    <div id="new-thread-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>📝 Создать новую тему</span>
+                <div class="modal-close" onclick="closeModal('new-thread-modal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Форум:</label>
+                    <select class="input-field" id="thread-forum" style="width: 100%;">
+                        <option value="0">Основное обсуждение</option>
+                        <option value="1">Технологии</option>
+                        <option value="2">Развлечения</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Заголовок темы:</label>
+                    <input type="text" class="input-field" id="thread-title-input" placeholder="Введите заголовок..." style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <label>Содержание:</label>
+                    <textarea class="textarea" id="thread-text-input" placeholder="Введите текст сообщения..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="thread-private"> 🔒 Приватная тема (только для выбранных пользователей)
+                    </label>
+                </div>
+                <div id="private-users-select" style="display:none; margin-bottom: 10px;">
+                    <label>Дать доступ пользователям:</label>
+                    <div id="users-checkboxes" style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 5px;"></div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="button primary" onclick="createNewThread()">✓ Создать тему</button>
+                    <button class="button" onclick="closeModal('new-thread-modal')">✕ Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div id="reply-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>💬 Ответить на тему</span>
+                <div class="modal-close" onclick="closeModal('reply-modal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Ваше сообщение:</label>
+                    <textarea class="textarea" id="reply-text" placeholder="Введите ответ..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="button" onclick="closeModal('reply-modal')">✕ Отмена</button>
+                    <button class="button primary" onclick="addReply()">✓ Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Message Modal -->
+    <div id="send-message-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>✉️ Новое приватное сообщение</span>
+                <div class="modal-close" onclick="closeModal('send-message-modal')">×</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Кому:</label>
+                    <select class="input-field" id="message-recipient" style="width: 100%;">
+                        <option value="">Выберите пользователя...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Тема:</label>
+                    <input type="text" class="input-field" id="message-subject" placeholder="Тема сообщения..." style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <label>Сообщение:</label>
+                    <textarea class="textarea" id="message-text" placeholder="Введите текст..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="button primary" onclick="sendPrivateMessage()">✓ Отправить</button>
+                    <button class="button" onclick="closeModal('send-message-modal')">✕ Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ DATA STRUCTURE ============
+        const forumData = {
+            users: [],
+            forums: [
+                { id: 0, name: 'Основное обсуждение', desc: 'Темы общего характера и новости', threads: [] },
+                { id: 1, name: 'Технологии', desc: 'Обсуждение ПК и интернета', threads: [] },
+                { id: 2, name: 'Развлечения', desc: 'Игры, кино и хобби', threads: [] }
+            ],
+            messages: []
+        };
+
+        let currentUser = null;
+        let currentForum = null;
+        let currentThread = null;
+
+        // ============ STORAGE MANAGEMENT ============
+        function saveData() {
+            localStorage.setItem('forumData', JSON.stringify(forumData));
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('forumData');
+            if (data) {
+                const loaded = JSON.parse(data);
+                forumData.users = loaded.users || [];
+                forumData.forums = loaded.forums || forumData.forums;
+                forumData.messages = loaded.messages || [];
+            }
+        }
+
+        function getCurrentUser() {
+            const user = localStorage.getItem('currentUser');
+            return user ? JSON.parse(user) : null;
+        }
+
+        function setCurrentUser(user) {
+            currentUser = user;
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            } else {
+                localStorage.removeItem('currentUser');
+            }
+            updateHeader();
+        }
+
+        // ============ AUTH FUNCTIONS ============
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            closeModal('login-modal');
+        }
+
+        function switchLoginTab(tab) {
+            document.getElementById('login-tab').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register-tab').style.display = tab === 'register' ? 'block' : 'none';
+        }
+
+        function performLogin() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            const user = forumData.users.find(u => u.username === username && u.password === password);
+            if (!user) {
+                alert('Неверное имя пользователя или пароль!');
+                return;
+            }
+
+            setCurrentUser(user);
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            closeModal('login-modal');
+            showView('forums');
+            alert(`✓ Добро пожаловать, ${username}!`);
+        }
+
+        function performRegister() {
+            const username = document.getElementById('register-username').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const password2 = document.getElementById('register-password2').value;
+
+            if (!username || !email || !password || !password2) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            if (username.length < 3 || username.length > 20) {
+                alert('Имя пользователя должно быть от 3 до 20 символов!');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Пароль должен содержать минимум 6 символов!');
+                return;
+            }
+
+            if (password !== password2) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+
+            if (forumData.users.find(u => u.username === username)) {
+                alert('Это имя пользователя уже занято!');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                username: username,
+                email: email,
+                password: password,
+                avatar: username[0].toUpperCase(),
+                joinDate: new Date().toLocaleDateString('ru-RU'),
+                threads: [],
+                posts: []
+            };
+
+            forumData.users.push(newUser);
+            saveData();
+
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-password2').value = '';
+
+            switchLoginTab('login');
+            alert(`✓ Регистрация успешна! Теперь войдите с вашими учётными данными.`);
+        }
+
+        function logout() {
+            setCurrentUser(null);
+            currentForum = null;
+            currentThread = null;
+            showView('forums');
+            alert('Вы вышли из системы');
+        }
+
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
+            switchLoginTab('login');
+        }
+
+        // ============ FORUM FUNCTIONS ============
+        function showView(view) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(view).classList.add('active');
+
+            if (view === 'messages' && !currentUser) {
+                alert('Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
+                showView('forums');
+                return;
+            }
+
+            if (view === 'profile' && !currentUser) {
+                alert('Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
+                showView('forums');
+                return;
+            }
+
+            if (view === 'messages') {
+                updateMessages();
+            } else if (view === 'profile') {
+                updateProfile();
+            }
+        }
+
+        function showForum(forumId) {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите в аккаунт для просмотра форумов!');
+                openLoginModal();
+                return;
+            }
+
+            currentForum = forumId;
+            const forum = forumData.forums[forumId];
+            document.getElementById('forum-title').textContent = '📁 ' + forum.name;
+
+            const threadsList = document.getElementById('threads-list');
+            threadsList.innerHTML = '';
+
+            const availableThreads = forum.threads.filter(thread => {
+                if (thread.isPrivate) {
+                    return thread.allowedUsers && thread.allowedUsers.includes(currentUser.id);
+                }
+                return true;
+            });
+
+            if (availableThreads.length === 0) {
+                threadsList.innerHTML = '<div class="no-data">В этом форуме пока нет тем. Будьте первыми! 📝</div>';
+            } else {
+                availableThreads.forEach((thread, idx) => {
+                    const originalIdx = forum.threads.indexOf(thread);
+                    const postsCount = thread.posts.length;
+                    const lockBadge = thread.isPrivate ? '<span class="lock-badge">🔒 ПРИВАТНАЯ</span>' : '';
+                    threadsList.innerHTML += `
+                        <div class="thread-item">
+                            <div class="thread-icon">${postsCount > 5 ? '🔥' : '💬'}</div>
+                            <div class="thread-info">
+                                <h4 onclick="showThread(${forumId}, ${originalIdx})">${thread.title}</h4>
+                                <p>Автор: <strong>${thread.author}</strong> | ${thread.date} ${lockBadge}</p>
+                            </div>
+                            <div class="forum-stats">
+                                <strong>${postsCount}</strong><br><small>ответ.</small>
+                            </div>
+                            <button class="button" onclick="showThread(${forumId}, ${originalIdx})">Открыть →</button>
+                        </div>
+                    `;
+                });
+            }
+
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('forum-view').classList.add('active');
+        }
+
+        function backToForums() {
+            showView('forums');
+            currentForum = null;
+        }
+
+        function backToForum() {
+            if (currentForum !== null) {
+                showForum(currentForum);
+            }
+        }
+
+        function showThread(forumId, threadId) {
+            currentForum = forumId;
+            currentThread = threadId;
+            const thread = forumData.forums[forumId].threads[threadId];
+
+            if (thread.isPrivate && (!thread.allowedUsers || !thread.allowedUsers.includes(currentUser.id))) {
+                alert('У вас нет доступа к этой теме!');
+                return;
+            }
+
+            document.getElementById('thread-title').textContent = '💬 ' + thread.title;
+
+            const postsList = document.getElementById('posts-list');
+            postsList.innerHTML = '';
+
+            thread.posts.forEach((post) => {
+                const posterUser = forumData.users.find(u => u.id === post.userId);
+                const posterName = posterUser ? posterUser.username : 'Удалённый пользователь';
+                const posterAvatar = posterUser ? posterUser.avatar : '?';
+
+                postsList.innerHTML += `
+                    <div class="post-item">
+                        <div class="post-header">
+                            📌 ${posterName}
+                            <span>${post.date}</span>
+                        </div>
+                        <div class="post-body">
+                            <div class="post-avatar">${posterAvatar}</div>
+                            <div class="post-content">${post.text}</div>
+                        </div>
+                        <div class="post-footer">
+                            ⭐ Профиль | ✉️ Сообщение | 🔗 Цитата
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('thread-view').classList.add('active');
+        }
+
+        function openNewThreadModal() {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите в аккаунт!');
+                openLoginModal();
+                return;
+            }
+            updateUsersCheckboxes();
+            document.getElementById('new-thread-modal').classList.add('active');
+        }
+
+        function updateUsersCheckboxes() {
+            const container = document.getElementById('users-checkboxes');
+            container.innerHTML = '';
+            forumData.users.forEach(user => {
+                if (user.id !== currentUser.id) {
+                    container.innerHTML += `
+                        <label style="display: block; margin: 3px 0;">
+                            <input type="checkbox" value="${user.id}" class="user-checkbox"> ${user.username}
+                        </label>
+                    `;
+                }
+            });
+        }
+
+        document.getElementById('thread-private')?.addEventListener('change', function() {
+            document.getElementById('private-users-select').style.display = this.checked ? 'block' : 'none';
+        });
+
+        function createNewThread() {
+            if (!currentUser) return;
+
+            const title = document.getElementById('thread-title-input').value.trim();
+            const text = document.getElementById('thread-text-input').value.trim();
+            const forumId = parseInt(document.getElementById('thread-forum').value);
+            const isPrivate = document.getElementById('thread-private').checked;
+
+            if (!title || !text) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            let allowedUsers = [currentUser.id];
+            if (isPrivate) {
+                const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+                if (checkboxes.length === 0) {
+                    alert('Выберите хотя бы одного пользователя для приватной темы!');
+                    return;
+                }
+                checkboxes.forEach(cb => {
+                    allowedUsers.push(parseInt(cb.value));
+                });
+            }
+
+            const newThread = {
+                id: Date.now(),
+                title: title,
+                author: currentUser.username,
+                authorId: currentUser.id,
+                date: new Date().toLocaleDateString('ru-RU'),
+                isPrivate: isPrivate,
+                allowedUsers: isPrivate ? allowedUsers : null,
+                posts: [{
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    text: text,
+                    date: new Date().toLocaleString('ru-RU')
+                }]
+            };
+
+            forumData.forums[forumId].threads.push(newThread);
+            saveData();
+
+            document.getElementById('thread-title-input').value = '';
+            document.getElementById('thread-text-input').value = '';
+            document.getElementById('thread-private').checked = false;
+
+            closeModal('new-thread-modal');
+            alert('✓ Тема создана успешно!');
+            showForum(forumId);
+        }
+
+        function openReplyModal() {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите в аккаунт!');
+                return;
+            }
+            document.getElementById('reply-modal').classList.add('active');
+        }
+
+        function addReply() {
+            if (!currentUser || currentForum === null || currentThread === null) return;
+
+            const text = document.getElementById('reply-text').value.trim();
+            if (!text) {
+                alert('Введите текст сообщения!');
+                return;
+            }
+
+            const thread = forumData.forums[currentForum].threads[currentThread];
+            thread.posts.push({
+                id: Date.now(),
+                userId: currentUser.id,
+                text: text,
+                date: new Date().toLocaleString('ru-RU')
+            });
+
+            saveData();
+            document.getElementById('reply-text').value = '';
+            closeModal('reply-modal');
+            showThread(currentForum, currentThread);
+            alert('✓ Ответ добавлен!');
+        }
+
+        // ============ MESSAGES FUNCTIONS ============
+        function openSendMessageModal() {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите в аккаунт!');
+                return;
+            }
+
+            const select = document.getElementById('message-recipient');
+            select.innerHTML = '<option value="">Выберите пользователя...</option>';
+            forumData.users.forEach(user => {
+                if (user.id !== currentUser.id) {
+                    select.innerHTML += `<option value="${user.id}">${user.username}</option>`;
+                }
+            });
+
+            document.getElementById('send-message-modal').classList.add('active');
+        }
+
+        function sendPrivateMessage() {
+            if (!currentUser) return;
+
+            const recipientId = parseInt(document.getElementById('message-recipient').value);
+            const subject = document.getElementById('message-subject').value.trim();
+            const text = document.getElementById('message-text').value.trim();
+
+            if (!recipientId || !subject || !text) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            const recipient = forumData.users.find(u => u.id === recipientId);
+            if (!recipient) {
+                alert('Пользователь не найден!');
+                return;
+            }
+
+            forumData.messages.push({
+                id: Date.now(),
+                from: currentUser.id,
+                fromName: currentUser.username,
+                to: recipientId,
+                subject: subject,
+                text: text,
+                date: new Date().toLocaleString('ru-RU'),
+                read: false
+            });
+
+            saveData();
+            document.getElementById('message-subject').value = '';
+            document.getElementById('message-text').value = '';
+            closeModal('send-message-modal');
+            alert('✓ Сообщение отправлено!');
+        }
+
+        function updateMessages() {
+            if (!currentUser) return;
+
+            const messagesList = document.getElementById('messages-list');
+            const messageStatus = document.getElementById('message-status');
+
+            messageStatus.innerHTML = `<strong>Привет, ${currentUser.username}!</strong> Здесь показаны все сообщения, отправленные вам.`;
+
+            const myMessages = forumData.messages.filter(m => m.to === currentUser.id);
+
+            if (myMessages.length === 0) {
+                messagesList.innerHTML = '<div class="no-data">У вас нет сообщений</div>';
+                return;
+            }
+
+            messagesList.innerHTML = '';
+            myMessages.forEach(msg => {
+                messagesList.innerHTML += `
+                    <div class="message-item" onclick="alert('От: ${msg.fromName}\\nТема: ${msg.subject}\\n\\n${msg.text}')">
+                        <div class="message-from">От: ${msg.fromName}</div>
+                        <div style="font-weight: bold; color: #333;">${msg.subject}</div>
+                        <div class="message-text">${msg.text.substring(0, 100)}${msg.text.length > 100 ? '...' : ''}</div>
+                        <div class="message-time">${msg.date}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // ============ PROFILE FUNCTIONS ============
+        function updateProfile() {
+            if (!currentUser) return;
+
+            const profileStatus = document.getElementById('profile-status');
+            const profileContent = document.getElementById('profile-content');
+
+            profileStatus.innerHTML = `<strong>Профиль пользователя:</strong> ${currentUser.username}`;
+
+            const userThreads = forumData.forums.reduce((acc, forum) => {
+                return acc + forum.threads.filter(t => t.authorId === currentUser.id).length;
+            }, 0);
+
+            const userPosts = forumData.forums.reduce((acc, forum) => {
+                return acc + forum.threads.reduce((acc2, thread) => {
+                    return acc2 + thread.posts.filter(p => p.userId === currentUser.id).length;
+                }, 0);
+            }, 0);
+
+            profileContent.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 18px; margin-bottom: 10px;">
+                        <span style="font-size: 40px; font-weight: bold; color: #1f5b9c;">${currentUser.avatar}</span>
+                    </div>
+                    <p><strong>Имя:</strong> ${currentUser.username}</p>
+                    <p><strong>Email:</strong> ${currentUser.email}</p>
+                    <p><strong>Дата регистрации:</strong> ${currentUser.joinDate}</p>
+                    <p><strong>Создано тем:</strong> ${userThreads}</p>
+                    <p><strong>Создано постов:</strong> ${userPosts}</p>
+                </div>
+                <button class="button danger" onclick="logout()">🚪 Выход</button>
+            `;
+        }
+
+        // ============ UI UPDATE FUNCTIONS ============
+        function updateHeader() {
+            const headerStatus = document.getElementById('header-status');
+            const logoutBtn = document.getElementById('logout-btn');
+            const createThreadBtn = document.getElementById('create-thread-btn');
+            const replyBtn = document.getElementById('reply-btn');
+
+            if (currentUser) {
+                headerStatus.innerHTML = `<p>Вы вошли как:</p><p><strong>${currentUser.username}</strong></p>`;
+                logoutBtn.style.display = 'inline-block';
+                if (createThreadBtn) createThreadBtn.style.display = 'inline-block';
+                if (replyBtn) replyBtn.style.display = 'inline-block';
+            } else {
+                headerStatus.innerHTML = '<p>Вы не вошли</p>';
+                logoutBtn.style.display = 'none';
+                if (createThreadBtn) createThreadBtn.style.display = 'none';
+                if (replyBtn) replyBtn.style.display = 'none';
+            }
+
+            updateStats();
+            updateLatestUsers();
+        }
+
+        function updateStats() {
+            document.getElementById('total-users').textContent = forumData.users.length;
+            document.getElementById('online-users').textContent = currentUser ? 1 : 0;
+
+            let totalThreads = 0;
+            let totalPosts = 0;
+
+            forumData.forums.forEach((forum, idx) => {
+                const accessibleThreads = forum.threads.filter(t => {
+                    if (t.isPrivate) {
+                        return currentUser && t.allowedUsers && t.allowedUsers.includes(currentUser.id);
+                    }
+                    return true;
+                });
+
+                totalThreads += accessibleThreads.length;
+                document.getElementById(`forum-${idx}-threads`).textContent = accessibleThreads.length;
+
+                let forumPosts = 0;
+                accessibleThreads.forEach(thread => {
+                    forumPosts += thread.posts.length;
+                });
+
+                totalPosts += forumPosts;
+                document.getElementById(`forum-${idx}-posts`).textContent = forumPosts;
+            });
+
+            document.getElementById('total-threads').textContent = totalThreads;
+            document.getElementById('total-posts').textContent = totalPosts;
+        }
+
+        function updateLatestUsers() {
+            const container = document.getElementById('latest-users');
+            if (forumData.users.length === 0) {
+                container.innerHTML = '<p style="color: #999;">Нет пользователей</p>';
+                return;
+            }
+
+            const latestUsers = forumData.users.slice(-5).reverse();
+            container.innerHTML = '';
+            latestUsers.forEach(user => {
+                container.innerHTML += `<a onclick="alert('${user.username}\\nЭлектронная почта: ${user.email}\\nЗарегистрирован: ${user.joinDate}')">${user.username}</a>`;
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+
+        // ============ INITIALIZATION ============
+        function init() {
+            loadData();
+            currentUser = getCurrentUser();
+            updateHeader();
+
+            // Добавляем примерных пользователей если их нет
+            if (forumData.users.length === 0) {
+                forumData.users = [
+                    { id: 1, username: 'Admin', email: 'admin@forum.com', password: 'admin', avatar: 'A', joinDate: '2024-01-01' },
+                    { id: 2, username: 'User2007', email: 'user@forum.com', password: '123456', avatar: 'U', joinDate: '2024-01-15' },
+                    { id: 3, username: 'TestUser', email: 'test@forum.com', password: 'test123', avatar: 'T', joinDate: '2024-01-18' }
+                ];
+
+                // Добавляем примерные темы
+                forumData.forums[0].threads = [
+                    {
+                        id: 1,
+                        title: 'Добро пожаловать на форум!',
+                        author: 'Admin',
+                        authorId: 1,
+                        date: '2024-01-20',
+                        isPrivate: false,
+                        posts: [
+                            { id: 1, userId: 1, text: 'Привет всем! Добро пожаловать на наш ретро-форум 2007 года!', date: '2024-01-20 10:00' }
+                        ]
+                    }
+                ];
+
+                saveData();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
